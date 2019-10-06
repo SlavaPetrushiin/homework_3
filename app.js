@@ -5,10 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 
-var indexRouter = require('./routes/index');
-
-//require('./database');
+require('./database');
 require('./engine');
+
+var indexRouter = require('./routes/index');
 
 var app = express();
 
