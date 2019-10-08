@@ -14,19 +14,24 @@ router.post('/', function(req, res, next) {
 	.catch(error => res.render('error', {message: error.message}))
 });
 
+//администрирование
 router.get('/admin', function(req, res, next) {
   res.render('pages/admin.pug', { title: 'Express' });
 });
 
+
+//Загрузка фотографии
 router.post('/admin/upload', function(req, res, next) {
-  //res.render('pages/admin.pug', { title: 'Express' });
+	ENGINE.emit('/admin/upload', req)
 });
 
+//Загрузка скилов
 router.post('/admin/skills', function(req, res, next) {
 	ENGINE.emit('skills', req.body)
 	//.then(data => res.redirect(data))
 });
 
+//логирование
 router.get('/login', function(req, res, next) {
   res.render('pages/login.pug', { title: 'Express' });
 });

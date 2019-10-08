@@ -56,3 +56,12 @@ ENGINE.on('skills', response => {
 		DATABASE.emit('skills', response.data)
 	}
 })
+
+ENGINE.on('/admin/upload', response => {
+	let { name, price } = response.data.body;
+	let userFile = response.data.file;
+	userFile.userName = name;
+	userFile.userPrice = price;
+
+	DATABASE.emit('/admin/upload', userFile)
+})

@@ -24,3 +24,8 @@ DATABASE.on('skills', response => {
 	})
 	console.log(response)
 });
+
+DATABASE.on('/admin/upload', response => {
+	let file = response.data;
+	
+});

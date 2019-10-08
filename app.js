@@ -1,16 +1,35 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var sassMiddleware = require('node-sass-middleware');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const sassMiddleware = require('node-sass-middleware');
+const multer  = require("multer");
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const storageConfig = multer.diskStorage({
+	destination : ( req, file, cb ) =>{
+		cb(null, "public/images/products");
+	},
+	filename: (req, file, cb) =>{
+		cb(null, file.originalname);
+	}	
+})
+
+const adapter = new FileSync('db.json')
+const db = low(adapter)
+// Set some defaults
+	
+console.log(db.get('skills').value())	
+
 
 require('./database');
 require('./engine');
 
-var indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,9 +46,9 @@ app.use(sassMiddleware({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(multer({storage:storageConfig}).single("photo"));
 
 app.use('/', indexRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -48,3 +67,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
