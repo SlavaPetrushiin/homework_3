@@ -50,18 +50,27 @@ ENGINE.on('post/authorization', response => {
 	}
 })
 
-ENGINE.on('skills', response => {
+ENGINE.on('/admin/skills', response => {
 	let {age, concerts, cities, years} = response.data;
-	if (age !== undefined && concerts !== undefined && cities !== undefined && years !== undefined){
-		DATABASE.emit('skills', response.data)
+	if (age.length !== 0 && concerts.length !== 0 && cities.length !== 0 && years.length !== 0){
+		DATABASE.emit('/admin/skills', response.data)
+    	.then(data => response.reply(data))
+    	.catch(_ => response.replyErr({ message: 'Ошибка ' }))
+	} else {
+		response.reply({msgskill : "Заполните все поля"})
 	}
 })
 
 ENGINE.on('/admin/upload', response => {
 	let { name, price } = response.data.body;
 	let userFile = response.data.file;
-	userFile.userName = name;
-	userFile.userPrice = price;
-
-	DATABASE.emit('/admin/upload', userFile)
+	if (name.length !== 0 && price.length !== 0){
+		userFile.userName = name;
+		userFile.userPrice = price;
+		DATABASE.emit('/admin/upload', userFile)
+			.then(data => response.reply(data))
+			.catch(_ => response.replyErr({ message: 'Ошибка ' }))
+	} else {
+		response.reply({msgfile : "Заполните все поля"})
+	}
 })

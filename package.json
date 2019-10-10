@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www"
+    "devstart": "nodemon ./bin/www --ignore db.json"
   },
   "dependencies": {
     "@hapi/joi": "^16.1.6",

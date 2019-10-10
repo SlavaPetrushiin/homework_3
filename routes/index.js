@@ -1,17 +1,22 @@
-var express = require('express');
-var router = express.Router();
-var ENGINE = global.ENGINE;
-
+const express = require('express');
+const router = express.Router();
+const ENGINE = global.ENGINE;
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('db.json');
+const db = low(adapter);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('pages/index', { title: 'Express' });
+	let products = db.get('products').value();
+	let skills = db.get('skills').value();
+	res.render('pages/index', { products: products, skills : skills });
 });
 
 router.post('/', function(req, res, next) {
 	ENGINE.emit('post/message', req.body)
-	.then(data => console.log(data))
-	.catch(error => res.render('error', {message: error.message}))
+		.then(data => res.render('pages/index', data))
+		.catch(error => res.render('error', {message: error.message}))
 });
 
 //администрирование
@@ -23,12 +28,15 @@ router.get('/admin', function(req, res, next) {
 //Загрузка фотографии
 router.post('/admin/upload', function(req, res, next) {
 	ENGINE.emit('/admin/upload', req)
+		.then(data => res.render('pages/admin.pug', data))
+		.catch(error => res.render('error', {message: error.message}))
 });
 
 //Загрузка скилов
 router.post('/admin/skills', function(req, res, next) {
-	ENGINE.emit('skills', req.body)
-	//.then(data => res.redirect(data))
+	ENGINE.emit('/admin/skills', req.body)
+		.then(data => res.render('pages/admin.pug', data))
+		.catch(error => res.render('error', {message: error.message}))
 });
 
 //логирование

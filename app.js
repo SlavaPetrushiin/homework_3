@@ -5,8 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const multer  = require("multer");
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
 
 const storageConfig = multer.diskStorage({
 	destination : ( req, file, cb ) =>{
@@ -17,12 +15,13 @@ const storageConfig = multer.diskStorage({
 	}	
 })
 
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-// Set some defaults
-	
-console.log(db.get('skills').value())	
+/*const upload = multer({
+	storageConfig,
+	limits: {fieldSize: 2 * 1024 * 1024},
+}).single("photo");
 
+global.UPLOAD = upload;
+console.log(upload)*/
 
 require('./database');
 require('./engine');
