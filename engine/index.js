@@ -26,7 +26,6 @@ ENGINE.on('post/message', response => {
 
 ENGINE.on('post/authorization', response => {
 	const {	email, passowrd } = response.data;
-	console.log('work')
 	const schema = joi.object().keys({
 		email: joi.string().email().required(),
 		password : joi.string().min(7).alphanum().required()

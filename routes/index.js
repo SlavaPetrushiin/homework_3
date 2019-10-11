@@ -6,22 +6,20 @@ const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
+const upload = global.UPLOAD;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	let products = db.get('products').value();
 	let skills = db.get('skills').value();
-	console.log(req.flash().msgsemail)
-	let messageFlash = req.flash().msgsemail;
-	if(messageFlash){
-		console.log('Теперь я здесь, есть клик!')
-		//let message = req.flash().msgsemail[0];
-		res.render('pages/index', { products: products, skills : skills, msgsemail: message});
-	} else {
-		console.log('Я тута')
-		res.render('pages/index', { products: products, skills : skills});
-	}
-
+	let social = db.get('social').value();
+	let messageFlash = req.flash('msgsemail')[0] || null;
+	res.render('pages/index', { 
+		products,
+		skills,
+		social,
+		messageFlash
+	});
 });
 
 router.post('/', function(req, res, next) {
@@ -40,7 +38,7 @@ router.get('/admin', function(req, res, next) {
 
 
 //Загрузка фотографии
-router.post('/admin/upload', function(req, res, next) {
+router.post('/admin/upload', upload.single('photo'), function(req, res, next) {
 	ENGINE.emit('/admin/upload', req)
 		.then(data => res.redirect('/admin'))
 		.catch(error => res.render('error', {message: error.message}))
@@ -55,7 +53,8 @@ router.post('/admin/skills', function(req, res, next) {
 
 //логирование
 router.get('/login', function(req, res, next) {
-  res.render('pages/login.pug', { title: 'Express' });
+	let social = db.get('social').value();
+  res.render('pages/login.pug', { social });
 });
 
 router.post('/login', function(req, res, next) {

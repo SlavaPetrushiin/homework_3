@@ -9,13 +9,12 @@ const db = low(adapter);
 
 global.DATABASE = DATABASE;
 
-const adminEmail = 'slava@mail.ru';
-const adminPassword = '12345678'
-
 DATABASE.on('post/authorization', response => {
 	const {	email, password } = response.data;
-	console.log(email, password)
-
+	const administrator = db.get("administrator").value();
+	const adminEmail = administrator.email;
+	const adminPassword = administrator.password;
+	
 	if(email === adminEmail && password === adminPassword){
 		response.reply(true);
 	} else {

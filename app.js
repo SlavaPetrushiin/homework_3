@@ -8,7 +8,7 @@ const multer  = require("multer");
 const session = require('express-session');
 const flash = require('connect-flash');
 
-const storageConfig = multer.diskStorage({
+const storage = multer.diskStorage({
 	destination : ( req, file, cb ) =>{
 		cb(null, "public/images/products");
 	},
@@ -17,13 +17,12 @@ const storageConfig = multer.diskStorage({
 	}	
 })
 
-/*const upload = multer({
-	storageConfig,
+const upload = multer({
+	storage : storage,
 	limits: {fieldSize: 2 * 1024 * 1024},
-}).single("photo");
+})
 
 global.UPLOAD = upload;
-console.log(upload)*/
 
 require('./database');
 require('./engine');
@@ -49,7 +48,6 @@ app.use(sassMiddleware({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(multer({storage:storageConfig}).single("photo"));
 
 app.use('/', indexRouter);
 
