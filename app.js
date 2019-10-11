@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const multer  = require("multer");
+const session = require('express-session');
+const flash = require('connect-flash');
 
 const storageConfig = multer.diskStorage({
 	destination : ( req, file, cb ) =>{
@@ -37,7 +39,9 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('secret key'));
+app.use(session({ cookie: { maxAge: 3600 * 24 } }));
+app.use(flash());
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),

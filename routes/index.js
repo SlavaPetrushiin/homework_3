@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const flash = require('connect-flash');
 const ENGINE = global.ENGINE;
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -10,12 +11,25 @@ const db = low(adapter);
 router.get('/', function(req, res, next) {
 	let products = db.get('products').value();
 	let skills = db.get('skills').value();
-	res.render('pages/index', { products: products, skills : skills });
+	console.log(req.flash().msgsemail)
+	let messageFlash = req.flash().msgsemail;
+	if(messageFlash){
+		console.log('Теперь я здесь, есть клик!')
+		//let message = req.flash().msgsemail[0];
+		res.render('pages/index', { products: products, skills : skills, msgsemail: message});
+	} else {
+		console.log('Я тута')
+		res.render('pages/index', { products: products, skills : skills});
+	}
+
 });
 
 router.post('/', function(req, res, next) {
 	ENGINE.emit('post/message', req.body)
-		.then(data => res.render('pages/index', data))
+		.then(data => {
+			req.flash('msgsemail', data.msgsemail)
+			res.redirect('/');
+		})
 		.catch(error => res.render('error', {message: error.message}))
 });
 
@@ -28,7 +42,7 @@ router.get('/admin', function(req, res, next) {
 //Загрузка фотографии
 router.post('/admin/upload', function(req, res, next) {
 	ENGINE.emit('/admin/upload', req)
-		.then(data => res.render('pages/admin.pug', data))
+		.then(data => res.redirect('/admin'))
 		.catch(error => res.render('error', {message: error.message}))
 });
 

@@ -17,7 +17,7 @@ ENGINE.on('post/message', response => {
 	const valid = error == undefined;
 	if(!valid){
 		//console.log(response.reply)
-		response.reply( {status: 200} );
+		response.reply( {msgsemail : "Заполните все поля для отправки сообщения!"} );
 	} else {
 		//console.log(5555555555555555555555)
 		response.reply( {msgsemail : "Сообщение доставлено!"} )
