@@ -9,7 +9,19 @@ const db = low(adapter);
 
 global.DATABASE = DATABASE;
 
-DATABASE.on('post/authorization', response => {
+DATABASE.on('pages/home', response => {
+	let products = db.get('products').value();
+	let skills = db.get('skills').value();
+	let social = db.get('social').value();
+	response.reply({products, skills, social});	
+})
+
+DATABASE.on('login/social', response => {
+	let social = db.get('social').value();
+	response.reply(social);	
+})
+
+DATABASE.on('login/authorization', response => {
 	const {	email, password } = response.data;
 	const administrator = db.get("administrator").value();
 	const adminEmail = administrator.email;

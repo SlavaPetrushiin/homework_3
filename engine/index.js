@@ -3,6 +3,12 @@ const ENGINE = new ee.EventEmitter('engine');
 const joi = require('@hapi/joi');
 global.ENGINE = ENGINE;
 
+ENGINE.on('pages/home', response => {
+	DATABASE.emit('pages/home', response.data)
+		.then(data => {response.reply(data)})
+		.catch(_ => response.replyErr({ message: 'Какая та ошибка!' }));
+})
+
 ENGINE.on('post/message', response => {
 	const {	name, email, message } = response.data;
 
@@ -24,7 +30,13 @@ ENGINE.on('post/message', response => {
 	}
 })
 
-ENGINE.on('post/authorization', response => {
+ENGINE.on('login/social', response => {
+	DATABASE.emit('login/social', response.data)
+		.then(data => {response.reply(data)})
+		.catch(_ => response.replyErr({ message: 'Какая та ошибка!' }));	
+})
+
+ENGINE.on('login/authorization', response => {
 	const {	email, passowrd } = response.data;
 	const schema = joi.object().keys({
 		email: joi.string().email().required(),
@@ -37,7 +49,7 @@ ENGINE.on('post/authorization', response => {
 	if(!valid){
 		response.reply( {status: error} );
 	} else {
-		DATABASE.emit('post/authorization', response.data)
+		DATABASE.emit('login/authorization', response.data)
 		.then((data) => {
 			if (data){
 				response.reply('/admin')

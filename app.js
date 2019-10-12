@@ -4,25 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
-const multer  = require("multer");
 const session = require('express-session');
 const flash = require('connect-flash');
-
-const storage = multer.diskStorage({
-	destination : ( req, file, cb ) =>{
-		cb(null, "public/images/products");
-	},
-	filename: (req, file, cb) =>{
-		cb(null, file.originalname);
-	}	
-})
-
-const upload = multer({
-	storage : storage,
-	limits: {fieldSize: 2 * 1024 * 1024},
-})
-
-global.UPLOAD = upload;
 
 require('./database');
 require('./engine');
