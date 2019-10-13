@@ -1,12 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const flash = require('connect-flash');
 const ENGINE = global.ENGINE;
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('db.json');
-const db = low(adapter);
-
 const multer  = require("multer");
 
 const storage = multer.diskStorage({
@@ -16,16 +10,12 @@ const storage = multer.diskStorage({
 	filename: (req, file, cb) =>{
 		cb(null, file.originalname);
 	}	
-})
+});
 
 const upload = multer({
 	storage : storage,
 	limits: {fieldSize: 2 * 1024 * 1024},
-})
-
-
-
-//const upload = global.UPLOAD;
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -59,7 +49,6 @@ router.get('/admin', function(req, res, next) {
   res.render('pages/admin.pug', {msgskill, msgfile});
 });
 
-
 //Загрузка фотографии
 router.post('/admin/upload', upload.single('photo'), function(req, res, next) {
 	ENGINE.emit('/admin/upload', req)
@@ -85,14 +74,22 @@ router.get('/login', function(req, res, next) {
 	ENGINE.emit('login/social', req)
 		.then(data => {
 			let social = data;
-			res.render('pages/login.pug', { social });
+			let msglogin = req.flash('msglogin')[0] || null;
+			res.render('pages/login.pug', { social, msglogin });
 		})
 		.catch(error => res.render('error', {message: error.message}))
 });
 
 router.post('/login', function(req, res, next) {
 	ENGINE.emit('login/authorization', req.body)
-		.then(data => res.redirect(data))
+		.then(data => {
+			if(data === "/admin"){
+				res.redirect(data);
+			} else {
+				req.flash('msglogin', data.msglogin);
+				res.redirect('/login');
+			}
+		})
 		.catch(error => res.render('error', {message: error.message}))
 });
 

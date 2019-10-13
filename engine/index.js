@@ -22,10 +22,8 @@ ENGINE.on('post/message', response => {
 	const {value, error} = result;
 	const valid = error == undefined;
 	if(!valid){
-		//console.log(response.reply)
 		response.reply( {msgsemail : "Заполните все поля для отправки сообщения!"} );
 	} else {
-		//console.log(5555555555555555555555)
 		response.reply( {msgsemail : "Сообщение доставлено!"} )
 	}
 })
@@ -47,14 +45,14 @@ ENGINE.on('login/authorization', response => {
 	const {value, error} = result;
 	const valid = error == undefined;
 	if(!valid){
-		response.reply( {status: error} );
+		response.reply( {msglogin: 'Поля заполнены не верно!'} );
 	} else {
 		DATABASE.emit('login/authorization', response.data)
 		.then((data) => {
 			if (data){
 				response.reply('/admin')
 			} else {
-				response.reply({msgslogin : "Вход запрещен"})
+				response.reply({msglogin : "Почта или прароль не совпадают! Повторите попытку!"})
 			}
 		})
 		.catch(_ => response.replyErr({ message: 'Какая та ошибка!' }));

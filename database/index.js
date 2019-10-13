@@ -1,10 +1,9 @@
 const ee = require('@nauma/eventemitter');
 const DATABASE = new ee.EventEmitter('database');
-const fs = require('fs');
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
  
-const adapter = new FileSync('db.json')
+const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 global.DATABASE = DATABASE;
